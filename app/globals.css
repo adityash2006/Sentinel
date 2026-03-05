@@ -1,0 +1,189 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Sentinel Brand Palette */
+  --brand-accent: 221 220 104;       /* rgb(221,220,104) - chartreuse yellow */
+  --brand-cream: 236 226 208;        /* rgb(236,226,208) - warm cream */
+  --brand-dark: 59 52 31;            /* rgb(59,52,31) - dark olive */
+
+  --background: oklch(0.955 0.012 88); /* warm cream base */
+  --foreground: oklch(0.22 0.04 80);   /* dark olive */
+  --card: oklch(0.975 0.008 88);
+  --card-foreground: oklch(0.22 0.04 80);
+  --popover: oklch(0.975 0.008 88);
+  --popover-foreground: oklch(0.22 0.04 80);
+  --primary: oklch(0.22 0.04 80);
+  --primary-foreground: oklch(0.955 0.012 88);
+  --secondary: oklch(0.91 0.025 88);
+  --secondary-foreground: oklch(0.22 0.04 80);
+  --muted: oklch(0.91 0.02 88);
+  --muted-foreground: oklch(0.45 0.03 80);
+  --accent: oklch(0.875 0.11 96);    /* accent yellow */
+  --accent-foreground: oklch(0.22 0.04 80);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.87 0.02 88);
+  --input: oklch(0.87 0.02 88);
+  --ring: oklch(0.875 0.11 96);
+  --radius: 0.75rem;
+
+  /* Custom tokens */
+  --sentinel-yellow: rgb(221, 220, 104);
+  --sentinel-cream: rgb(236, 226, 208);
+  --sentinel-dark: rgb(59, 52, 31);
+  --sentinel-dark-80: rgba(59, 52, 31, 0.8);
+  --sentinel-dark-10: rgba(59, 52, 31, 0.08);
+  --sentinel-yellow-20: rgba(221, 220, 104, 0.2);
+  --sentinel-yellow-40: rgba(221, 220, 104, 0.4);
+}
+
+@theme inline {
+  --font-sans: 'Inter', 'Inter Fallback';
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 8px);
+  --radius-2xl: calc(var(--radius) + 16px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Noise texture overlay for premium feel */
+.noise-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Premium card glass effect */
+.glass-card {
+  background: rgba(236, 226, 208, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(221, 220, 104, 0.25);
+}
+
+.glass-card-dark {
+  background: rgba(59, 52, 31, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(221, 220, 104, 0.15);
+}
+
+/* Subtle grain overlay */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Animated underline on hover */
+.hover-underline {
+  position: relative;
+}
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--sentinel-yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.hover-underline:hover::after {
+  transform: scaleX(1);
+}
+
+/* Section fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(221,220,104,0.3) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+/* Dotted grid pattern */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(59,52,31,0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Trust badge pill */
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  background: rgba(221, 220, 104, 0.18);
+  border: 1px solid rgba(221, 220, 104, 0.45);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgb(59, 52, 31);
+  letter-spacing: 0.01em;
+}
