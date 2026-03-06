@@ -55,18 +55,18 @@ export function Navbar() {
 
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <a
-            href="#features"
+          <Link
+            href="/signin"
             className="text-sm font-medium text-[rgb(59,52,31)]/70 hover:text-[rgb(59,52,31)] transition-colors px-4 py-2"
           >
             Sign In
-          </a>
-          <a
-            href="#cta"
+          </Link>
+          <Link
+            href="/signup"
             className="inline-flex items-center gap-2 text-sm font-semibold bg-[rgb(59,52,31)] text-[rgb(236,226,208)] px-5 py-2.5 rounded-xl hover:bg-[rgb(59,52,31)]/90 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
           >
             Get Started
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -92,12 +92,12 @@ export function Navbar() {
               {link.label}
             </a>
           ))}
-          <a
-            href="#cta"
+          <Link
+            href="/signup"
             className="inline-flex items-center justify-center text-sm font-semibold bg-[rgb(59,52,31)] text-[rgb(236,226,208)] px-5 py-3 rounded-xl mt-2"
           >
             Get Started Free
-          </a>
+          </Link>
         </div>
       )}
     </header>
