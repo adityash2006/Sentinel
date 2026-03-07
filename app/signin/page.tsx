@@ -3,17 +3,35 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Shield, Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react"
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-
+  const [loading, setLoading] = useState(false);
+  const [wrongpassword,setwrongpassword]=useState("");
+  const router=useRouter();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    await new Promise((r) => setTimeout(r, 1200))
+    e.preventDefault()
+    setLoading(true);
+    const response=await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signin`, {
+  method: "POST",
+  body: JSON.stringify({ email, password }),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+const res=await response.json();
+  if(response.status==201){
+      const token=res.token;
+      localStorage.setItem("token",token);
+      router.push("/dashboard");
+  }else{
+    setwrongpassword(res.message);
+  }
     setLoading(false)
   }
 
@@ -103,12 +121,7 @@ export default function SignInPage() {
                   <label htmlFor="password" className="text-xs font-semibold text-[rgb(59,52,31)]/70 uppercase tracking-widest">
                     Password
                   </label>
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs text-[rgb(59,52,31)]/50 hover:text-[rgb(59,52,31)] transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
+                 
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[rgb(59,52,31)]/35" strokeWidth={2} />
@@ -118,7 +131,10 @@ export default function SignInPage() {
                     autoComplete="current-password"
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {setPassword(e.target.value)
+                      setwrongpassword("");
+                    }
+                    }
                     placeholder="••••••••"
                     className="w-full pl-10 pr-11 py-3 rounded-xl border border-[rgb(59,52,31)]/15 bg-white/60 text-[rgb(59,52,31)] text-sm placeholder:text-[rgb(59,52,31)]/30 focus:outline-none focus:ring-2 focus:ring-[rgb(221,220,104)]/60 focus:border-[rgb(221,220,104)] transition-all"
                   />
@@ -132,7 +148,9 @@ export default function SignInPage() {
                   </button>
                 </div>
               </div>
-
+              {wrongpassword && (
+                  <p className="text-xs text-red-500/80">{wrongpassword}</p>
+                )}
               {/* Submit */}
               <button
                 type="submit"

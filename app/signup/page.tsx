@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation";
 import { Shield, Eye, EyeOff, ArrowRight, Mail, Lock, User, CheckCircle2 } from "lucide-react"
 
 const perks = [
@@ -11,6 +12,7 @@ const perks = [
 ]
 
 export default function SignUpPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [name, setName] = useState("")
@@ -19,6 +21,7 @@ export default function SignUpPage() {
   const [confirm, setConfirm] = useState("")
   const [loading, setLoading] = useState(false)
   const [agreed, setAgreed] = useState(false)
+  const [wrongpassword,setwrongpassword]=useState("");
 
   const passwordStrength = password.length === 0 ? 0 : password.length < 6 ? 1 : password.length < 10 ? 2 : 3
   const strengthLabel = ["", "Weak", "Fair", "Strong"]
@@ -26,11 +29,23 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    await new Promise((r) => setTimeout(r, 1400))
+    setLoading(true);
+    const response=await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signup`, {
+  method: "POST",
+  body: JSON.stringify({ name, email, password }),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+const res=await response.json();
+  if(response.status==201){
+      router.push("/signin")
+  }else{
+    setwrongpassword(res.message);
+  }
     setLoading(false)
   }
-
+  
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-16">
       {/* Background */}
@@ -135,6 +150,9 @@ export default function SignUpPage() {
           <div className="p-7 lg:p-10">
             <div className="mb-7">
               <h1 className="text-2xl font-bold text-[rgb(59,52,31)] tracking-tight">Create your account</h1>
+              <button onClick={handleSubmit} className="cursor-pointer border-3 p-2">submit</button>
+              <button onClick={handleSubmit} className="cursor-pointer border-3 p-2">submit</button>
+
               <p className="text-sm text-[rgb(59,52,31)]/50 mt-1">Free forever. No credit card needed.</p>
             </div>
 
@@ -213,7 +231,8 @@ export default function SignUpPage() {
                     autoComplete="new-password"
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {setPassword(e.target.value) ;
+                      setwrongpassword("")}}
                     placeholder="Min. 8 characters"
                     className="w-full pl-10 pr-11 py-3 rounded-xl border border-[rgb(59,52,31)]/15 bg-white/60 text-[rgb(59,52,31)] text-sm placeholder:text-[rgb(59,52,31)]/30 focus:outline-none focus:ring-2 focus:ring-[rgb(221,220,104)]/60 focus:border-[rgb(221,220,104)] transition-all"
                   />
@@ -278,6 +297,9 @@ export default function SignUpPage() {
                 </div>
                 {confirm.length > 0 && confirm !== password && (
                   <p className="text-xs text-red-500/80">Passwords do not match</p>
+                )}
+                {wrongpassword && (
+                  <p className="text-xs text-red-500/80">{wrongpassword}</p>
                 )}
               </div>
 
