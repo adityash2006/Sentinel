@@ -110,7 +110,7 @@ export function HowItWorksSection() {
         {/* Bottom CTA inline */}
         <div className="mt-16 flex justify-center">
           <a
-            href="#cta"
+            href="/analyze-resume"
             className="inline-flex items-center gap-2 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold px-8 py-4 rounded-xl text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
           >
             Try It Free — No Account Needed

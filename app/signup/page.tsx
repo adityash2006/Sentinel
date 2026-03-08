@@ -150,10 +150,7 @@ const res=await response.json();
           <div className="p-7 lg:p-10">
             <div className="mb-7">
               <h1 className="text-2xl font-bold text-[rgb(59,52,31)] tracking-tight">Create your account</h1>
-              <button onClick={handleSubmit} className="cursor-pointer border-3 p-2">submit</button>
-              <button onClick={handleSubmit} className="cursor-pointer border-3 p-2">submit</button>
-
-              <p className="text-sm text-[rgb(59,52,31)]/50 mt-1">Free forever. No credit card needed.</p>
+              
             </div>
 
             {/* Google */}
@@ -335,7 +332,7 @@ const res=await response.json();
               <button
                 type="submit"
                 disabled={loading || !agreed || (confirm.length > 0 && confirm !== password)}
-                className="mt-1 w-full flex items-center justify-center gap-2.5 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold text-sm py-3.5 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0 disabled:cursor-not-allowed"
+                className="mt-1 cursor-pointer w-full flex items-center justify-center gap-2.5 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold text-sm py-3.5 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:translate-y-0 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
