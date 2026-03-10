@@ -58,7 +58,6 @@ export default function Dashboard() {
 
   function logout() {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     router.replace('/signin');
   }
 
@@ -97,7 +96,7 @@ export default function Dashboard() {
             </div>
             <button
               onClick={logout}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-medium hover:bg-[rgb(59,52,31)]/90 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
+              className="inline-flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-medium hover:bg-[rgb(59,52,31)]/90 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Logout</span>

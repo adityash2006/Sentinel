@@ -209,7 +209,7 @@ export default function AnalyzeResumePage() {
                 </p>
               </div>
             </form>
-          ) : (
+          )  : (
             /* Results Section */
             <div className="space-y-8 animate-fade-in-up">
               {/* Score card */}

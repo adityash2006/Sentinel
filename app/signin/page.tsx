@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState ,useEffect} from "react"
 import Link from "next/link"
 import { Shield, Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react"
 import { useRouter } from "next/navigation";
@@ -12,9 +12,30 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [wrongpassword,setwrongpassword]=useState("");
   const router=useRouter();
+   useEffect(() => {
+      async function checkAuth() {
+        const token = localStorage.getItem('token');
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/token`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          if (res.status === 201) {
+            router.replace('/dashboard');
+          } 
+        } catch (error) {
+          console.error('Auth check failed:', error);
+        }
+      }
+  
+      checkAuth();
+    }, []);
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
     e.preventDefault()
     setLoading(true);
     const response=await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signin`, {
