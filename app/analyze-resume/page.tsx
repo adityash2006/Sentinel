@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Shield, Upload, FileText, ArrowRight, AlertCircle, CheckCircle2, Sparkles, Loader } from "lucide-react"
+import { POST } from "../api/signin/route"
 
 export default function AnalyzeResumePage() {
   const [file, setFile] = useState<File | null>(null)
@@ -40,10 +41,40 @@ export default function AnalyzeResumePage() {
   }
 
   const handleAnalyze = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!file) return
 
-    setLoading(true)
+    setLoading(true);
+   
+     try {
+      const options={method:POST}
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/analyze-resume`,
+          {
+           method:POST,
+           body:FormData
+          }
+        );
+
+        if (res.status !== 201) {
+          router.replace('/signin');
+        } else {
+          setAuthorized(true);
+          // Extract user name from localStorage or set default
+          const user = localStorage.getItem('user');
+          if (user) {
+            try {
+              const userData = JSON.parse(user);
+              setUserName(userData.name || 'User');
+            } catch {
+              setUserName('User');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        router.replace('/signin');
+      }
     // Simulate analysis delay
     await new Promise((r) => setTimeout(r, 2500))
     setLoading(false)
