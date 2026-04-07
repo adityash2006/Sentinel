@@ -3,14 +3,31 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Shield, Upload, FileText, ArrowRight, AlertCircle, CheckCircle2, Sparkles, Loader } from "lucide-react"
-import { POST } from "../api/signin/route"
-
+import { useRouter } from "next/navigation"
+type AnalysisResult = {
+  score: number
+  match_percentage: number | null
+  strengths: string[]
+  improvements: string[]
+  
+}
 export default function AnalyzeResumePage() {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [analyzed, setAnalyzed] = useState(false)
-  const [dragActive, setDragActive] = useState(false)
+  const [dragActive, setDragActive] = useState(false);
+  const [jd, setjd] = useState("");
+  const router=useRouter();
 
+  const defaultAnalysis: AnalysisResult = {
+  score: 0,
+  match_percentage: 20,
+  strengths: [],
+  improvements: [],
+ 
+}
+  const [analysisresult,setanalysisresult]=useState<AnalysisResult>(defaultAnalysis);
+  
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -45,40 +62,31 @@ export default function AnalyzeResumePage() {
     if (!file) return
 
     setLoading(true);
-   
+   const formData=new FormData();
+   formData.append("resume",file);
+   formData.append("jobDescription", jd);
      try {
-      const options={method:POST}
+      
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/analyze-resume`,
           {
-           method:POST,
-           body:FormData
+           method:"POST",
+           body:formData
           }
         );
-
-        if (res.status !== 201) {
-          router.replace('/signin');
-        } else {
-          setAuthorized(true);
-          // Extract user name from localStorage or set default
-          const user = localStorage.getItem('user');
-          if (user) {
-            try {
-              const userData = JSON.parse(user);
-              setUserName(userData.name || 'User');
-            } catch {
-              setUserName('User');
-            }
-          }
-        }
+          const result=await res.json();
+        setanalysisresult(result.message);
+        console.log(analysisresult);
+      
+   
+        // console.log(result);
       } catch (error) {
-        console.error('Auth check failed:', error);
-        router.replace('/signin');
+        console.log("File upload logic error");
+       console.log(error);
       }
-    // Simulate analysis delay
-    await new Promise((r) => setTimeout(r, 2500))
-    setLoading(false)
-    setAnalyzed(true)
+       setLoading(false);
+    setAnalyzed(true);
+   
   }
 
   const handleReset = () => {
@@ -193,7 +201,9 @@ export default function AnalyzeResumePage() {
                   </div>
                 </label>
               </div>
-
+              <div><p className="mb-4">JOB DESCRITION (optional) </p>
+                    <input type="text" onChange={(e)=>setjd(e.target.value)} className="p-3 border-3 border-[rgb(59,52,31)]/20 rounded-lg text-black w-full" />
+                </div>                           
               {/* Features grid */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
@@ -217,7 +227,7 @@ export default function AnalyzeResumePage() {
               <button
                 type="submit"
                 disabled={!file || loading}
-                className="w-full flex items-center justify-center gap-3 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:translate-y-0 disabled:cursor-not-allowed group"
+                className="w-full cursor-pointer flex items-center justify-center gap-3 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:translate-y-0 disabled:cursor-not-allowed group"
               >
                 {loading ? (
                   <>
@@ -250,10 +260,10 @@ export default function AnalyzeResumePage() {
               >
                 <div className="text-center mb-8">
                   <p className="text-sm text-[rgb(59,52,31)]/50 uppercase tracking-widest font-medium mb-4">
-                    ATS Compatibility Score
+                    GEMINI BASED ATS Compatibility Score
                   </p>
                   <div className="inline-flex items-end gap-2 mb-6">
-                    <span className="text-6xl font-bold text-[rgb(59,52,31)]">87</span>
+                    <span className="text-6xl font-bold text-[rgb(59,52,31)]">{analysisresult.score}</span>
                     <span className="text-2xl text-[rgb(59,52,31)]/50 pb-2">/100</span>
                   </div>
                   <div className="w-full h-3 rounded-full bg-[rgb(59,52,31)]/12 overflow-hidden">
@@ -263,38 +273,25 @@ export default function AnalyzeResumePage() {
                     />
                   </div>
                 </div>
-
-                {/* Status badges */}
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    { label: "Format", value: "Excellent", icon: CheckCircle2, color: "text-green-600" },
-                    { label: "Keywords", value: "Good", icon: CheckCircle2, color: "text-green-600" },
-                    { label: "Spacing", value: "Fair", icon: AlertCircle, color: "text-amber-600" },
-                    { label: "Length", value: "Perfect", icon: CheckCircle2, color: "text-green-600" },
-                  ].map(({ label, value, icon: Icon, color }) => (
-                    <div key={label} className="flex items-center gap-3 p-3 rounded-lg bg-[rgb(59,52,31)]/4">
-                      <Icon className={`w-4 h-4 ${color}`} strokeWidth={2.5} />
-                      <div>
-                        <p className="text-xs text-[rgb(59,52,31)]/50 uppercase tracking-widest font-medium">
-                          {label}
-                        </p>
-                        <p className="text-sm font-semibold text-[rgb(59,52,31)]">{value}</p>
+              </div>
+            <div className="space-y-4">
+                <h3 className="text-xl font-bold text-[rgb(59,52,31)]">Strengths in your Resume</h3>
+                <div className="space-y-3">
+                  {analysisresult.strengths.map((tip, i) => (
+                    <div key={i} className="flex gap-4 p-4 rounded-xl border border-[rgb(221,220,104)]/30 bg-[rgb(221,220,104)]/8">
+                      <div className="w-6 h-6 rounded-full bg-[rgb(221,220,104)]/40 flex items-center justify-center text-[rgb(59,52,31)] font-semibold text-sm shrink-0 mt-0.5">
+                        {i + 1}
                       </div>
+                      <p className="text-sm text-[rgb(59,52,31)]/70 leading-relaxed">{tip}</p>
                     </div>
                   ))}
                 </div>
               </div>
-
               {/* Improvements section */}
               <div className="space-y-4">
-                <h3 className="text-xl font-bold text-[rgb(59,52,31)]">Quick Wins to Improve</h3>
+                <h3 className="text-xl font-bold text-[rgb(59,52,31)]">Suggested improvements</h3>
                 <div className="space-y-3">
-                  {[
-                    "Add specific metrics (e.g., 'Increased sales by 35%' instead of 'Improved sales')",
-                    "Include more action verbs at the beginning of each bullet point",
-                    "Ensure consistent date formatting throughout",
-                    "Add relevant skills keywords from job descriptions you're targeting",
-                  ].map((tip, i) => (
+                  {analysisresult.improvements.map((tip, i) => (
                     <div key={i} className="flex gap-4 p-4 rounded-xl border border-[rgb(221,220,104)]/30 bg-[rgb(221,220,104)]/8">
                       <div className="w-6 h-6 rounded-full bg-[rgb(221,220,104)]/40 flex items-center justify-center text-[rgb(59,52,31)] font-semibold text-sm shrink-0 mt-0.5">
                         {i + 1}
@@ -305,30 +302,9 @@ export default function AnalyzeResumePage() {
                 </div>
               </div>
 
-              {/* CTA section */}
-              <div
-                className="rounded-2xl border border-[rgb(59,52,31)]/15 p-8 text-center"
-                style={{ background: "rgba(59,52,31,0.08)" }}
-              >
-                <h3 className="text-lg font-bold text-[rgb(59,52,31)] mb-3">
-                  Ready to apply with confidence?
-                </h3>
-                <p className="text-sm text-[rgb(59,52,31)]/60 mb-6">
-                  Sign up for Sentinel to get job scam detection when you apply.
-                </p>
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center gap-2.5 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold px-8 py-3 rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all group"
-                >
-                  Get Started Free
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-
-              {/* Reset button */}
               <button
                 onClick={handleReset}
-                className="w-full text-sm font-medium text-[rgb(59,52,31)]/60 hover:text-[rgb(59,52,31)] py-3 rounded-xl border border-[rgb(59,52,31)]/15 hover:bg-[rgb(59,52,31)]/5 transition-all"
+                className="w-full cursor-pointer text-sm font-medium text-[rgb(59,52,31)]/60 hover:text-[rgb(59,52,31)] py-3 rounded-xl border border-[rgb(59,52,31)]/15 hover:bg-[rgb(59,52,31)]/5 transition-all"
               >
                 Analyze Another Resume
               </button>

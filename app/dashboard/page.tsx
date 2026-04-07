@@ -9,7 +9,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
   const [checking, setChecking] = useState(true);
-  const [userName, setUserName] = useState('User');
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     async function checkAuth() {
@@ -35,15 +35,15 @@ export default function Dashboard() {
         } else {
           setAuthorized(true);
           // Extract user name from localStorage or set default
-          const user = localStorage.getItem('user');
-          if (user) {
+         
+         
             try {
-              const userData = JSON.parse(user);
-              setUserName(userData.name || 'User');
+              const userData = await res.json();
+              setUserName(userData.name);
             } catch {
               setUserName('User');
             }
-          }
+          
         }
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -268,15 +268,15 @@ export default function Dashboard() {
             <p className="text-[rgb(236,226,208)]/80 mb-6 max-w-2xl mx-auto">
               Check back regularly to stay updated on the latest job scam tactics and recruiter verification insights. Your safety is our priority.
             </p>
-            <a
-              href="/"
+            <Link
+              href="/community"
               className="inline-flex items-center gap-2 px-8 py-3 bg-[rgb(221,220,104)] text-[rgb(59,52,31)] font-semibold rounded-xl hover:bg-[rgb(221,220,104)]/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
-              Back to Home
+              Check community posts 
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </main>
