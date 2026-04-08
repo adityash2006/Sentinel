@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Shield, Upload, FileText, ArrowRight, AlertCircle, CheckCircle2, Sparkles, Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 type AnalysisResult = {
   score: number
   match_percentage: number | null
@@ -121,17 +122,17 @@ export default function AnalyzeResumePage() {
             </Link>
 
             <div className="flex items-center gap-4">
-              <Link
+              {/* <Link
                 href="/signin"
                 className="text-sm font-medium text-[rgb(59,52,31)]/70 hover:text-[rgb(59,52,31)] transition-colors"
               >
                 Sign In
-              </Link>
+              </Link> */}
               <Link
-                href="/signup"
+                href="/dashboard"
                 className="text-sm font-semibold bg-[rgb(59,52,31)] text-[rgb(236,226,208)] px-4 py-2 rounded-lg hover:bg-[rgb(59,52,31)]/90 transition-all"
               >
-                Get Started
+                <ArrowLeft />
               </Link>
             </div>
           </div>

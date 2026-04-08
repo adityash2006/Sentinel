@@ -12,12 +12,38 @@ const navLinks = [
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [userlog,setuserlog]=useState(false);
 
   useEffect(() => {
+      async function checkAuth() {
+        const token = localStorage.getItem('token');
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/token`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          if (res.status === 201) {
+            setuserlog(true);
+          } 
+        } catch (error) {
+          console.error('Auth check failed:', error);
+        }
+      }
+  
+      checkAuth();
+
+    // setuserlog(true);
     const handler = () => setScrolled(window.scrollY > 20)
     window.addEventListener("scroll", handler, { passive: true })
     return () => window.removeEventListener("scroll", handler)
+
+
   }, [])
 
   return (
@@ -54,6 +80,7 @@ export function Navbar() {
         </ul>
 
         {/* CTA Buttons */}
+        { !userlog ?
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/signin"
@@ -68,7 +95,19 @@ export function Navbar() {
             Get Started
           </Link>
         </div>
+:
+ <div className="hidden md:flex items-center gap-3">
+          
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 text-sm font-semibold bg-[rgb(59,52,31)] text-[rgb(236,226,208)] px-5 py-2.5 rounded-xl hover:bg-[rgb(59,52,31)]/90 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
+          >
+            Dashboard
+          </Link>
 
+           </div>
+          
+          }
         {/* Mobile Toggle */}
         <button
           className="md:hidden text-[rgb(59,52,31)] p-2"

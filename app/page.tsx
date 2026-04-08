@@ -8,6 +8,8 @@ import { CtaSection } from "@/components/cta-section"
 import { Footer } from "@/components/footer"
 
 export default function Home() {
+
+  
   return (
     <main>
       <Navbar />

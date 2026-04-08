@@ -269,7 +269,7 @@ export default function Dashboard() {
               Check back regularly to stay updated on the latest job scam tactics and recruiter verification insights. Your safety is our priority.
             </p>
             <Link
-              href="/community"
+              href="/scam-reports"
               className="inline-flex items-center gap-2 px-8 py-3 bg-[rgb(221,220,104)] text-[rgb(59,52,31)] font-semibold rounded-xl hover:bg-[rgb(221,220,104)]/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
               Check community posts 
