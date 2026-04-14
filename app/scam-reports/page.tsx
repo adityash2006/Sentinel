@@ -1,87 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Shield, ThumbsUp, ThumbsDown, MessageSquare, Share2, Flag, Clock, AlertTriangle, Plus } from 'lucide-react'
 
 interface ScamReport {
   id: string
-  username: string
-  avatar: string
+  userName:string
+ 
   title: string
   description: string
   upvotes: number
   downvotes: number
-  userVote: 'up' | 'down' | null
-  timestamp: string
-  category: 'job' | 'recruiter' | 'interview' | 'payment'
+ user_vote:string | null
+  createdAt: string
+ 
 }
 
 const mockReports: ScamReport[] = [
-  {
-    id: '1',
-    username: 'Alex Chen',
-    avatar: 'AC',
-    title: 'Fake Google Recruiter - Email Phishing Attempt',
-    description:
-      'Received an email from "noreply@google-careers.net" claiming I was pre-selected for a software engineer role. The email had multiple red flags: poor grammar, suspicious domain, and asked for personal banking details. The official Google domain is @google.com, not .net.',
-    upvotes: 342,
-    downvotes: 2,
-    userVote: null,
-    timestamp: '2 hours ago',
-    category: 'recruiter',
-  },
-  {
-    id: '2',
-    username: 'Jordan Smith',
-    avatar: 'JS',
-    title: 'Unpaid Trial Period - No Job Posting',
-    description:
-      'Applied to a "Marketing Specialist" role that promised a 2-week trial period with a $5000 signing bonus. After 2 weeks of work, they said the trial failed and asked me to pay $500 for "certification training" to continue. The job posting has since been removed.',
-    upvotes: 287,
-    downvotes: 5,
-    userVote: null,
-    timestamp: '5 hours ago',
-    category: 'job',
-  },
-  {
-    id: '3',
-    username: 'Morgan Lee',
-    avatar: 'ML',
-    title: 'Interview with Stock Photo Images as Team Members',
-    description:
-      'Had a video interview where 3 out of 5 "team members" on screen were using stock photos as their background. When I asked about the team structure, the interviewer disconnected. LinkedIn search revealed the company doesn\'t exist.',
-    upvotes: 521,
-    downvotes: 1,
-    userVote: null,
-    timestamp: '8 hours ago',
-    category: 'interview',
-  },
-  {
-    id: '4',
-    username: 'Taylor Brown',
-    avatar: 'TB',
-    title: 'Request for Upfront Payment for Work Equipment',
-    description:
-      'Got a job offer as a "Virtual Assistant" with a salary of $8000/month. Before starting, they asked me to pay $300 upfront for "equipment and training materials." Legitimate companies provide equipment. This is a classic scam pattern.',
-    upvotes: 198,
-    downvotes: 3,
-    userVote: null,
-    timestamp: '12 hours ago',
-    category: 'payment',
-  },
-  {
-    id: '5',
-    username: 'Casey Rodriguez',
-    avatar: 'CR',
-    title: 'Salary Way Too Good To Be True - Data Entry Role',
-    description:
-      'Posted job for data entry paying $10,000/month with no experience required. Real data entry roles pay $1,500-3,500/month. This screams scam. The company website was registered just 3 weeks ago. Use tools like WHOIS to check domain registration dates.',
-    upvotes: 411,
-    downvotes: 7,
-    userVote: null,
-    timestamp: '1 day ago',
-    category: 'job',
+ {
+    id: 'report.id',
+  title:' report.title',
+  description:'report.description',
+  userName:' report.user.name',
+  upvotes: 4,
+  downvotes: 6,
+
+  user_vote:'UPVOTE' ,
+  createdAt:'report.createdAt'
   },
 ]
 
@@ -94,38 +40,109 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
 
 export default function ScamReportsPage() {
   const [reports, setReports] = useState<ScamReport[]>(mockReports)
-  const [filterCategory, setFilterCategory] = useState<string | null>(null)
+  const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [loading,setloading]=useState(true);
+const [loadingVotes, setLoadingVotes] = useState<{[key: number]: boolean}>({});
+  useEffect(()=>{
+    const  fetchreports=async()=>{
+      const token=localStorage.getItem("token");
+      if(token){
 
-  const filteredReports = filterCategory
-    ? reports.filter((r) => r.category === filterCategory)
-    : reports
+    const repor= await fetch( `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/scam-reports`,
+       {method:"POST",
+      headers: {
+      "Content-Type": "application/json",
+    },
+        body:JSON.stringify({
+          token
+        })
+      });
+    const result=await repor.json(); 
 
-  const handleVote = (reportId: string, voteType: 'up' | 'down') => {
+   
+    if(result){
+      setReports(result.formattedReports);
+      setloading(false);
+    }
+  }
+    }
+    fetchreports();
+  },[])
+
+  // const reports = filterCategory
+  //   ? reports.filter((r) => r.category === filterCategory)
+  //   : reports
+
+  const handleVote = async (reportId: string, voteType: 'UPVOTE' | 'DOWNVOTE') => {
+   //@ts-ignore
+    if (loadingVotes[reportId]) return;
+    setLoadingVotes(prev => ({ ...prev, [reportId]: true }));
     setReports(
       reports.map((report) => {
         if (report.id === reportId) {
-          const currentVote = report.userVote
+          const currentVote = report.user_vote
           let upvotes = report.upvotes
           let downvotes = report.downvotes
 
-          // Remove previous vote
-          if (currentVote === 'up') upvotes--
-          if (currentVote === 'down') downvotes--
-
-          // Add new vote
-          if (voteType === 'up') upvotes++
-          if (voteType === 'down') downvotes++
+         
+          if (currentVote === 'UPVOTE') upvotes--
+          if (currentVote === 'DOWNVOTE') downvotes--
+          let user_vote=null
+          
+          if (currentVote!='UPVOTE' && voteType === 'UPVOTE') {upvotes++ 
+            user_vote='UPVOTE'
+          }
+          if (currentVote!='DOWNVOTE' && voteType === 'DOWNVOTE') {downvotes++
+             user_vote='DOWNVOTE'
+          }
 
           return {
             ...report,
             upvotes,
             downvotes,
-            userVote: currentVote === voteType ? null : voteType,
+            user_vote,
           }
         }
         return report
       })
     )
+    try {
+    
+     
+ const token=localStorage.getItem("token");
+        const res= await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/vote`,
+       {method:"POST",
+      headers: {
+      "Content-Type": "application/json",
+    },
+        body:JSON.stringify({
+          token,reportId,voteType
+        })
+      });
+
+      if(res){
+         setLoadingVotes(prev => ({ ...prev, [reportId]: false }));
+      }
+      
+     
+
+    } catch (error) {
+
+
+      console.log("error while liking or diskling the post",error);
+    }
+
+
+  }
+    if (loading) {
+    return (
+      <div className="min-h-screen bg-[rgb(236,226,208)] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-3 border-[rgb(59,52,31)]/20 border-t-[rgb(221,220,104)] rounded-full animate-spin"></div>
+          <p className="text-[rgb(59,52,31)] font-medium">Loading reports </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -193,7 +210,7 @@ export default function ScamReportsPage() {
           >
             All Reports
           </button>
-          {['job', 'recruiter', 'interview', 'payment'].map((cat) => (
+          {/* {['job', 'recruiter', 'interview', 'payment'].map((cat) => (
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
@@ -205,45 +222,39 @@ export default function ScamReportsPage() {
             >
               {cat}
             </button>
-          ))}
+          ))} */}
         </div>
 
         {/* Reports list */}
         <div className="space-y-6">
-          {filteredReports.map((report) => (
+          {reports.map((report) => (
             <div
               key={report.id}
-              className="glass-card rounded-2xl p-6 sm:p-8 border border-[rgb(221,220,104)]/25 hover:border-[rgb(221,220,104)]/40 transition-all hover:shadow-md group"
+              className="glass-card rounded-2xl p-6 sm:p-8 border shadow-sm border-[rgb(221,220,104)]/25 hover:border-[rgb(221,220,104)]/40 transition-all hover:shadow-md group"
             >
               {/* Header */}
               <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-[rgb(59,52,31)] text-[rgb(236,226,208)] flex items-center justify-center font-semibold text-sm shrink-0">
-                    {report.avatar}
+                   
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-[rgb(59,52,31)]">{report.username}</p>
+                
+                    <p className="font-semibold text-[rgb(59,52,31)]">{report.userName}</p>
                     <div className="flex items-center gap-2 text-xs text-[rgb(59,52,31)]/50">
                       <Clock className="w-3.5 h-3.5" />
-                      {report.timestamp}
+                     
+                      {new Date(report.createdAt).toLocaleDateString() }
                     </div>
                   </div>
                 </div>
 
                 {/* Category badge */}
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${
-                    categoryColors[report.category].bg
-                  } ${categoryColors[report.category].text} border ${
-                    categoryColors[report.category].border
-                  } shrink-0`}
-                >
-                  {report.category}
-                </span>
+              
               </div>
 
               {/* Title */}
-              <h3 className="text-xl font-bold text-[rgb(59,52,31)] mb-3 group-hover:text-[rgb(221,220,104)] transition-colors">
+              <h3 className="text-xl font-bold text-[rgb(59,52,31)] mb-3 group-hover:text-[rgb(171,114,27)] transition-colors">
                 {report.title}
               </h3>
 
@@ -255,11 +266,11 @@ export default function ScamReportsPage() {
               {/* Footer - Vote buttons and actions */}
               <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-[rgb(59,52,31)]/10">
                 {/* Vote buttons */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 ">
                   <button
-                    onClick={() => handleVote(report.id, 'up')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
-                      report.userVote === 'up'
+                    onClick={() => handleVote(report.id, 'UPVOTE')}
+                    className={`flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
+                      report.user_vote === 'UPVOTE'
                         ? 'bg-green-100 text-green-700 border border-green-300'
                         : 'bg-[rgb(59,52,31)]/8 text-[rgb(59,52,31)]/60 hover:bg-[rgb(59,52,31)]/12'
                     }`}
@@ -269,9 +280,9 @@ export default function ScamReportsPage() {
                   </button>
 
                   <button
-                    onClick={() => handleVote(report.id, 'down')}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
-                      report.userVote === 'down'
+                    onClick={() => handleVote(report.id, 'DOWNVOTE')}
+                    className={`flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
+                      report.user_vote ==='DOWNVOTE'
                         ? 'bg-red-100 text-red-700 border border-red-300'
                         : 'bg-[rgb(59,52,31)]/8 text-[rgb(59,52,31)]/60 hover:bg-[rgb(59,52,31)]/12'
                     }`}

@@ -270,7 +270,7 @@ export default function AnalyzeResumePage() {
                   <div className="w-full h-3 rounded-full bg-[rgb(59,52,31)]/12 overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-[rgb(221,220,104)] to-[rgb(221,220,104)]/60 rounded-full transition-all duration-1000"
-                      style={{ width: "87%" }}
+                      style={{ width: `${analysisresult.score}%` }}
                     />
                   </div>
                 </div>

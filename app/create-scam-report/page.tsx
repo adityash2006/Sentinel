@@ -1,22 +1,53 @@
 'use client'
 
-import { useState } from 'react'
+import { useState ,useEffect} from 'react'
 import Link from 'next/link'
 import { Shield, ArrowLeft, AlertTriangle, ChevronDown, Loader } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function CreateScamReportPage() {
+
+    const router=useRouter();
+    useEffect(() => {
+      async function checkAuth() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          router.replace('/signin');
+          return;
+        }
+  
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/dashboard`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (res.status !== 201) {
+            router.replace('/signin');
+          } else {
+                        
+          }
+        } catch (error) {
+          console.error('Auth check failed:', error);
+          router.replace('/signin');
+        }
+      }
+      checkAuth();
+    }, [router]);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    platform: '',
+    scamPlatform: '',
     companyName: '',
     scammerContact: '',
-    category: '',
+    evidenceUrl: '',
   })
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [expandedCategory, setExpandedCategory] = useState(false)
-
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -25,22 +56,46 @@ export default function CreateScamReportPage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     setLoading(true)
-    // Simulate submission delay
-    await new Promise((r) => setTimeout(r, 2000))
-    setLoading(false)
-    setSubmitted(true)
+
+  try {
+    const token=localStorage.getItem("token");
+    
+    console.log(formData);
+    const res= await fetch(
+       `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/create-report`,
+       {method:"POST",headers: {
+      "Content-Type": "application/json",
+    },
+        body:JSON.stringify({
+          formData,token
+        })
+      }
+    );
+   
+    if(res.status===201){
+      setSubmitted(true)
+    }
+
+    
+  } catch (error) {
+    
+    setSubmitted(false)
+  }finally{
+    setLoading(false);
+  }
+ 
   }
 
   const handleReset = () => {
     setFormData({
       title: '',
       description: '',
-      platform: '',
+      scamPlatform: '',
       companyName: '',
       scammerContact: '',
-      category: '',
+      evidenceUrl: '',
     })
     setSubmitted(false)
   }
@@ -99,31 +154,6 @@ export default function CreateScamReportPage() {
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Category */}
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="category" className="text-sm font-semibold text-[rgb(59,52,31)]/70 uppercase tracking-widest">
-                    Scam Type *
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 rounded-xl border border-[rgb(59,52,31)]/15 bg-white/60 text-[rgb(59,52,31)] text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[rgb(221,220,104)]/60 focus:border-[rgb(221,220,104)] transition-all"
-                    >
-                      <option value="">Select a category</option>
-                      <option value="job">Fake Job Posting</option>
-                      <option value="recruiter">Fraudulent Recruiter</option>
-                      <option value="interview">Suspicious Interview</option>
-                      <option value="payment">Upfront Payment Demand</option>
-                      <option value="other">Other</option>
-                    </select>
-                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[rgb(59,52,31)]/35 pointer-events-none" />
-                  </div>
-                </div>
-
                 {/* Scam Title */}
                 <div className="flex flex-col gap-2">
                   <label htmlFor="title" className="text-sm font-semibold text-[rgb(59,52,31)]/70 uppercase tracking-widest">
@@ -149,8 +179,8 @@ export default function CreateScamReportPage() {
                   <input
                     id="platform"
                     type="text"
-                    name="platform"
-                    value={formData.platform}
+                    name="scamPlatform"
+                    value={formData.scamPlatform}
                     onChange={handleInputChange}
                     placeholder="e.g., LinkedIn, Indeed, Email, Phone, etc."
                     required
@@ -178,7 +208,7 @@ export default function CreateScamReportPage() {
                 {/* Scammer Contact */}
                 <div className="flex flex-col gap-2">
                   <label htmlFor="scammerContact" className="text-sm font-semibold text-[rgb(59,52,31)]/70 uppercase tracking-widest">
-                    Scammer Contact (Email/Phone) *
+                    Scammer Contact (Email/Phone/USERNAME) *
                   </label>
                   <input
                     id="scammerContact"
@@ -212,11 +242,28 @@ export default function CreateScamReportPage() {
                   </p>
                 </div>
 
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="companyName" className="text-sm font-semibold text-[rgb(59,52,31)]/70  tracking-widest">
+                   Evidence URL (coming soon)
+                  </label>
+                  <input
+                    id="companyName"
+                    type="file"
+                    name="companyName"
+                    disabled
+                    value={formData.evidenceUrl}
+                    onChange={handleInputChange}
+                    placeholder="e.g., XYZ Corp, Tech Solutions Inc, etc."
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-[rgb(59,52,31)]/15 bg-white/10 text-[rgb(59,52,31)] text-sm placeholder:text-[rgb(59,52,31)]/30 focus:outline-none focus:ring-2 focus:ring-[rgb(221,220,104)]/60 focus:border-[rgb(221,220,104)] transition-all"
+                  />
+                </div>
+
                 {/* Info box */}
                 <div className="flex gap-3 p-4 rounded-xl bg-[rgb(59,52,31)]/8 border border-[rgb(59,52,31)]/15">
                   <AlertTriangle className="w-5 h-5 text-[rgb(59,52,31)] shrink-0 mt-0.5" strokeWidth={2} />
                   <p className="text-sm text-[rgb(59,52,31)]/70">
-                    Please provide accurate information. All reports are reviewed by our team before being published. False reports may be removed.
+                    Please provide accurate information. This is an open community built to support and protect everyone.
                   </p>
                 </div>
 
@@ -224,7 +271,7 @@ export default function CreateScamReportPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-3 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:translate-y-0 disabled:cursor-not-allowed group"
+                  className="w-full cursor-pointer flex items-center justify-center gap-3 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:translate-y-0 disabled:cursor-not-allowed group"
                 >
                   {loading ? (
                     <>
@@ -234,7 +281,7 @@ export default function CreateScamReportPage() {
                   ) : (
                     <>
                       Submit Report
-                      <AlertTriangle className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <AlertTriangle className="w-5  h-5 group-hover:scale-110 transition-transform" />
                     </>
                   )}
                 </button>
@@ -242,7 +289,7 @@ export default function CreateScamReportPage() {
                 {/* Back button */}
                 <Link
                   href="/scam-reports"
-                  className="w-full text-center text-sm font-medium text-[rgb(59,52,31)]/60 hover:text-[rgb(59,52,31)] py-3 rounded-xl border border-[rgb(59,52,31)]/15 hover:bg-[rgb(59,52,31)]/5 transition-all"
+                  className="w-full p-3 text-center text-sm font-medium text-[rgb(59,52,31)]/60 hover:text-[rgb(59,52,31)] py-3 rounded-xl border border-[rgb(59,52,31)]/15 hover:bg-[rgb(59,52,31)]/5 transition-all"
                 >
                   Cancel
                 </Link>
@@ -273,7 +320,7 @@ export default function CreateScamReportPage() {
                   Report Submitted Successfully
                 </h2>
                 <p className="text-lg text-[rgb(59,52,31)]/60 leading-relaxed">
-                  Thank you for helping protect the job seeker community. Our team will review your report within 24 hours.
+                  Thank you for helping protect the job seeker community.   
                 </p>
               </div>
 
@@ -282,22 +329,8 @@ export default function CreateScamReportPage() {
                 className="rounded-2xl border border-[rgb(221,220,104)]/30 p-6 space-y-4"
                 style={{ background: 'rgba(236,226,208,0.6)', backdropFilter: 'blur(12px)' }}
               >
-                <div>
-                  <p className="text-sm text-[rgb(59,52,31)]/50 uppercase tracking-widest font-medium mb-1">
-                    Scam Type
-                  </p>
-                  <p className="text-lg font-semibold text-[rgb(59,52,31)] capitalize">
-                    {formData.category}
-                  </p>
-                </div>
-                <div className="border-t border-[rgb(59,52,31)]/10 pt-4">
-                  <p className="text-sm text-[rgb(59,52,31)]/50 uppercase tracking-widest font-medium mb-1">
-                    Company Name
-                  </p>
-                  <p className="text-lg font-semibold text-[rgb(59,52,31)]">
-                    {formData.companyName}
-                  </p>
-                </div>
+                
+                
               </div>
 
               {/* Next steps */}
