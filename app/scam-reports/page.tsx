@@ -42,7 +42,7 @@ export default function ScamReportsPage() {
   const [reports, setReports] = useState<ScamReport[]>(mockReports)
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
   const [loading,setloading]=useState(true);
-const [loadingVotes, setLoadingVotes] = useState<{[key: number]: boolean}>({});
+const [loadingVotes, setLoadingVotes] = useState(false);
   useEffect(()=>{
     const  fetchreports=async()=>{
       const token=localStorage.getItem("token");
@@ -75,8 +75,8 @@ const [loadingVotes, setLoadingVotes] = useState<{[key: number]: boolean}>({});
 
   const handleVote = async (reportId: string, voteType: 'UPVOTE' | 'DOWNVOTE') => {
    //@ts-ignore
-    if (loadingVotes[reportId]) return;
-    setLoadingVotes(prev => ({ ...prev, [reportId]: true }));
+    if (loadingVotes) return;
+    setLoadingVotes(true);
     setReports(
       reports.map((report) => {
         if (report.id === reportId) {
@@ -120,16 +120,12 @@ const [loadingVotes, setLoadingVotes] = useState<{[key: number]: boolean}>({});
         })
       });
 
-      if(res){
-         setLoadingVotes(prev => ({ ...prev, [reportId]: false }));
-      }
-      
-     
-
+         setLoadingVotes(false);
+    
     } catch (error) {
-
-
       console.log("error while liking or diskling the post",error);
+    }finally{
+      setLoadingVotes(false);
     }
 
 
@@ -267,25 +263,25 @@ const [loadingVotes, setLoadingVotes] = useState<{[key: number]: boolean}>({});
               <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-[rgb(59,52,31)]/10">
                 {/* Vote buttons */}
                 <div className="flex items-center gap-2 ">
-                  <button
+                  <button disabled={loadingVotes}
                     onClick={() => handleVote(report.id, 'UPVOTE')}
                     className={`flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
                       report.user_vote === 'UPVOTE'
                         ? 'bg-green-100 text-green-700 border border-green-300'
                         : 'bg-[rgb(59,52,31)]/8 text-[rgb(59,52,31)]/60 hover:bg-[rgb(59,52,31)]/12'
-                    }`}
+                    } ${loadingVotes ? 'cursor-wait':'cursor-pointer'}`}
                   >
                     <ThumbsUp className="w-4 h-4" />
                     {report.upvotes}
                   </button>
 
-                  <button
+                  <button disabled={loadingVotes}
                     onClick={() => handleVote(report.id, 'DOWNVOTE')}
-                    className={`flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
+                    className={`flex  items-center  gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
                       report.user_vote ==='DOWNVOTE'
                         ? 'bg-red-100 text-red-700 border border-red-300'
                         : 'bg-[rgb(59,52,31)]/8 text-[rgb(59,52,31)]/60 hover:bg-[rgb(59,52,31)]/12'
-                    }`}
+                    }  ${loadingVotes ? 'cursor-wait':'cursor-pointer'}  ` }
                   >
                     <ThumbsDown className="w-4 h-4" />
                     {report.downvotes}
