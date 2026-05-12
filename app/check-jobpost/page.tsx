@@ -67,12 +67,7 @@ export default function JobAnalysisPage() {
               >
                 Dashboard
               </Link>
-              <Link
-                href="/signin"
-                className="text-sm font-semibold bg-[rgb(59,52,31)] text-[rgb(236,226,208)] px-5 py-2.5 rounded-xl hover:bg-[rgb(59,52,31)]/90 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
-              >
-                Sign In
-              </Link>
+             
             </div>
           </div>
         </div>
