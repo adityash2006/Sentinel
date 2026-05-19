@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Shield, ThumbsUp, ThumbsDown, MessageSquare, Share2, Flag, Clock, AlertTriangle, Plus } from 'lucide-react'
+import { Shield, ThumbsUp, ThumbsDown, MessageSquare, Share2, Flag, Clock, AlertTriangle, Plus, ArrowLeft } from 'lucide-react'
 
 interface ScamReport {
   id: string
@@ -144,6 +144,7 @@ const [loadingVotes, setLoadingVotes] = useState(false);
   return (
     <div className="relative min-h-screen flex flex-col bg-[rgb(236,226,208)] overflow-hidden">
       {/* Background */}
+      
       <div className="absolute inset-0 dot-grid opacity-40 pointer-events-none" />
       <div
         className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full pointer-events-none"
@@ -196,16 +197,7 @@ const [loadingVotes, setLoadingVotes] = useState(false);
 
         {/* Filter tabs */}
         <div className="flex flex-wrap gap-3 mb-10">
-          <button
-            onClick={() => setFilterCategory(null)}
-            className={`px-4 py-2 rounded-lg font-medium transition-all ${
-              filterCategory === null
-                ? 'bg-[rgb(59,52,31)] text-[rgb(236,226,208)] shadow-md'
-                : 'bg-[rgb(59,52,31)]/8 text-[rgb(59,52,31)]/70 hover:bg-[rgb(59,52,31)]/12'
-            }`}
-          >
-            All Reports
-          </button>
+         
           {/* {['job', 'recruiter', 'interview', 'payment'].map((cat) => (
             <button
               key={cat}

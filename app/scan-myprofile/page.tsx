@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 interface AnalysisResult {
   overallScore: number;
@@ -78,6 +80,11 @@ export default function ScanMyProfile() {
 
   return (
     <div className="container max-w-5xl py-12 mx-auto space-y-8">
+      <div>
+         <Link href="/dashboard" className="">
+              <ArrowLeft/>
+            </Link>
+      </div>
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold tracking-tight">AI Profile Scanner</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-
+import { ArrowLeft } from "lucide-react"
+import Link from 'next/link';
 interface Answer {
   score: number;
   feedback: string;
@@ -60,6 +61,13 @@ export default function ReportDashboard({ params }: { params: Promise<{ sessionI
   return (
     <div className="container max-w-5xl py-12 mx-auto space-y-8">
       <div className="flex flex-col items-center justify-center space-y-4 text-center">
+        <div className='w-full '>
+          <div className='w-14'>
+        <Link href="/practice-with-ai/history" className="">
+              <ArrowLeft/>
+            </Link>
+            </div>
+            </div>
         <h1 className="text-4xl font-bold tracking-tight">Interview Performance Report</h1>
         <div className="flex gap-4">
           <Card className="w-48">

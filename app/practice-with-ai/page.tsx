@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft } from 'lucide-react';
 
 export default function PracticeWithAI() {
   const [resumeText, setResumeText] = useState('');
@@ -18,6 +19,7 @@ export default function PracticeWithAI() {
 
   const handleStart = async () => {
     if (!resumeText || !jobDescription) {
+      
       toast({
         title: "Missing Information",
         description: "Please provide both resume text and job description.",
@@ -32,7 +34,7 @@ export default function PracticeWithAI() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}` // assuming jwt stored in localStorage
+          'Authorization': `Bearer ${localStorage.getItem('token')}` 
         },
         body: JSON.stringify({ resumeText, jobDescription })
       });
@@ -56,12 +58,16 @@ export default function PracticeWithAI() {
   };
 
   return (
-    <div className="container max-w-4xl py-12 mx-auto">
-      <div className="flex justify-end mb-4">
+    <div className="container max-w-4xl py-8 mx-auto">
+      <div className="flex justify-between mb-4">
+        <Link href="/dashboard" className="">
+              <ArrowLeft/>
+            </Link>
         <Link href="/practice-with-ai/history">
-          <Button variant="outline">View Previous Interviews</Button>
+          <Button className='cursor-pointer' variant="outline">View Previous Interviews</Button>
         </Link>
       </div>
+      
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl">AI Interview Practice</CardTitle>
@@ -92,7 +98,7 @@ export default function PracticeWithAI() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={handleStart} disabled={loading}>
+          <Button onClick={handleStart} className="cursor-pointer" disabled={loading}>
             {loading ? "Generating Questions..." : "Start Interview Practice"}
           </Button>
         </CardFooter>

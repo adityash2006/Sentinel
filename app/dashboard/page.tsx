@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, AlertTriangle, User, LogOut } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, User, LogOut ,ScreenShare  } from 'lucide-react';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -226,7 +226,7 @@ export default function Dashboard() {
 
               {/* Description */}
               <p className="text-[rgb(59,52,31)]/70 mb-6 leading-relaxed">
-                Scan and optimize your LinkedIn and social profiles. Get AI-driven recommendations to improve your professional presence and attract quality opportunities.
+                Scan and optimize your LinkedIn and social profiles. Get AI-driven recommendations to improve your professional presence .
               </p>
 
               {/* Stats */}
@@ -252,6 +252,43 @@ export default function Dashboard() {
                 </svg>
               </Link>
             </div>
+          </div>
+
+           <div className="group  glass-card rounded-2xl p-8 overflow-hidden relative border border-[rgb(221,220,104)]/25 hover:border-[rgb(221,220,104)]/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-[rgb(221,220,104)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <div className="relative z-10">
+              {/* Icon */}
+              <div className="w-14 h-14 bg-[rgb(221,220,104)]/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[rgb(221,220,104)]/30 transition-colors">
+                <ScreenShare  className="w-7 h-7 text-[rgb(232, 228, 31)]" />
+              </div>
+
+              {/* Title */}
+              <h3 className="text-2xl font-bold text-[rgb(59,52,31)] mb-3">
+               Practice with AI
+              </h3>
+
+              {/* Description */}
+              <p className="text-[rgb(59,52,31)]/70 mb-6 leading-relaxed">
+               Let us help you practice your interview before hand, based upon your resume and job description 
+                
+              </p>
+
+              {/* Stats */}
+             
+
+              {/* Button */}
+              <Link
+                href="/practice-with-ai"
+                className="inline-flex items-center gap-2 w-full justify-center px-6 py-3 bg-[rgb(59,52,31)] text-[rgb(236,226,208)] font-semibold rounded-xl hover:bg-[rgb(59,52,31)]/90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 group"
+              >
+               Start Interview 
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          
           </div>
         </div>
 

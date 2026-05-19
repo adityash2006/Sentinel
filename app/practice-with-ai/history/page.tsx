@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import {ArrowLeft } from 'lucide-react';
 
 interface SessionHistory {
   id: string;
@@ -39,17 +40,32 @@ export default function InterviewHistory() {
     fetchHistory();
   }, []);
 
-  if (loading) return <div className="text-center mt-20">Loading history...</div>;
+  if (loading) return (
+      <div className="min-h-screen  flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-3 border-[rgb(59,52,31)]/20 border-t-[rgb(221,220,104)] rounded-full animate-spin"></div>
+          <p className="text-[rgb(59,52,31)] font-medium">Loading histoy</p>
+        </div>
+      </div>
+    );
 
   return (
     <div className="container max-w-5xl py-12 mx-auto space-y-8">
+      <div className='mb-10'>
+        <div className='w-13'>
+        <Link href="/practice-with-ai" className="">
+              <ArrowLeft/>
+            </Link>
+            </div>
+
+      </div>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold tracking-tight">Interview History</h1>
           <p className="text-muted-foreground mt-2">Review your past AI interview practices and feedback.</p>
         </div>
         <Link href="/practice-with-ai">
-          <Button>Start New Interview</Button>
+          <Button className='cursor-pointer'>Start New Interview</Button>
         </Link>
       </div>
 
@@ -84,7 +100,7 @@ export default function InterviewHistory() {
               </CardHeader>
               <CardContent className="mt-auto pt-4">
                 <Link href={`/practice-with-ai/report/${session.id}`} className="w-full">
-                  <Button variant="outline" className="w-full">View Full Report</Button>
+                  <Button variant="outline" className="w-full cursor-pointer">View Full Report</Button>
                 </Link>
               </CardContent>
             </Card>
