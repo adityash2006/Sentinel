@@ -32,7 +32,7 @@ export default function InterviewSession({ params }: { params: Promise<{ session
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/interview/${unwrappedParams.sessionId}/questions`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'}/api/interview/${unwrappedParams.sessionId}/questions`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -58,7 +58,7 @@ export default function InterviewSession({ params }: { params: Promise<{ session
       const formData = new FormData();
       formData.append('audio', audioBlob, 'answer.webm');
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/interview/${currentQuestion.id}/answer`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'}/api/interview/${currentQuestion.id}/answer`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

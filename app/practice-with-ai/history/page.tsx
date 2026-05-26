@@ -23,7 +23,7 @@ export default function InterviewHistory() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/interview/history`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'}/api/interview/history`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }

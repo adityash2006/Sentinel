@@ -36,7 +36,7 @@ export default function ReportDashboard({ params }: { params: Promise<{ sessionI
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/interview/${unwrappedParams.sessionId}/report`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'}/api/interview/${unwrappedParams.sessionId}/report`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }

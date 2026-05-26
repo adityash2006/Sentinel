@@ -30,7 +30,7 @@ export default function PracticeWithAI() {
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/interview/create`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000'}/api/interview/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
